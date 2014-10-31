@@ -8,9 +8,11 @@ phrase.value "phraseDecoratorSuffix", "__}}"
 phrase.config ["$provide", ($provide) ->
   $provide.decorator "$translate", ["$delegate", "phraseEnabled", "phraseDecoratorPrefix", "phraseDecoratorSuffix", ($translate, phraseEnabled, phraseDecoratorPrefix, phraseDecoratorSuffix) ->
     if phraseEnabled
-      $translate._instant = $translate.instant
-      $translate.instant = (translationId, interpolateParams, interpolationId) ->
-        "#{phraseDecoratorPrefix}phrase_#{translationId}#{phraseDecoratorSuffix}"
+      originalTranslate = $translate
+      $translate = (translationId, interpolateParams, interpolationId) ->
+        originalTranslate("#{phraseDecoratorPrefix}phrase_#{translationId}#{phraseDecoratorSuffix}", interpolateParams, interpolationId)
+
+      angular.extend($translate, originalTranslate)
 
     $translate
   ]

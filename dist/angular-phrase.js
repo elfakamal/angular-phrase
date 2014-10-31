@@ -16,10 +16,11 @@
       return $provide.decorator("$translate", [
         "$delegate", "phraseEnabled", "phraseDecoratorPrefix", "phraseDecoratorSuffix", function($translate, phraseEnabled, phraseDecoratorPrefix, phraseDecoratorSuffix) {
           if (phraseEnabled) {
-            $translate._instant = $translate.instant;
-            $translate.instant = function(translationId, interpolateParams, interpolationId) {
-              return "" + phraseDecoratorPrefix + "phrase_" + translationId + phraseDecoratorSuffix;
-            };
+            var originalTranslate = $translate;
+            $translate = function (translationId, interpolateParams, interpolationId) {
+              return originalTranslate("" + phraseDecoratorPrefix + "phrase_" + translationId + phraseDecoratorSuffix, interpolateParams, interpolationId);
+            }
+            angular.extend($translate, originalTranslate);
           }
           return $translate;
         }
